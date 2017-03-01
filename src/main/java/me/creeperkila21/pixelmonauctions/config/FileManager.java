@@ -44,13 +44,17 @@ public class FileManager {
 			language.set("messages.AuctionWinner", "%prefix% &e%winner% &6has just won the auction and has received a %pokemon%!");
 			language.set("messages.NotEnoughMoney", "%prefix% &cYou don't have enough money to do this!");
 			language.set("messages.PlayerCouldntAffordAuction", "%prefix% &c%player% didn't have enough money to accept the auction!!");
-			
+			language.set("messages.NoPokemonInSlot", "%prefix% &6You dont have a pokemon in that slot!");
 			List<String> format = new ArrayList<String>();
 			format.add("%prefix% &7/pixelauction auction <Slot> <Price> <Increment>");
 			format.add("%prefix% &7/pixelauction bid [Amount]");
 			format.add("%prefix% &7/pixelauction info");
 			language.set("messages.AuctionCommand.format", format);
-			
+			language.set("messages.AuctionStarted", "%prefix% &6%player% is auctioning a%shiny%&aLevel: %lvl% %pokemon% &6pokemon with the moves of &a%moves%&6! Bid Starting at &a$%starting% with an increment of &a$%increment%");
+			language.set("messages.LastPokemon", "%prefix &cYou can not trade your last pokemon!");
+			language.set("messages.NoAuction", "%prefix% &6There is currently no auction going on!");
+			language.set("messages.OwnBid", "%prefix% &cYou can not bid on your own auction!");
+			language.set("messages.InvalidSlot", "%prefix% &cThat is an invalid slot! (1-6)");
 			try {
 				language.save(lfile);
 			} catch (IOException e) {

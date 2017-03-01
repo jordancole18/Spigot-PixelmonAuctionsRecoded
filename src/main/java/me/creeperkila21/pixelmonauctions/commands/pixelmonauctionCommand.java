@@ -13,6 +13,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
+import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
+import com.pixelmonmod.pixelmon.storage.PlayerNotLoadedException;
+import com.pixelmonmod.pixelmon.storage.PlayerStorage;
 
 public class pixelmonauctionCommand implements CommandExecutor{
 
@@ -70,11 +73,6 @@ public class pixelmonauctionCommand implements CommandExecutor{
 					return true;
 				}
 				
-				if(Auction.currentAuction != null){
-					sender.sendMessage(fm.getMessage("AuctionGoing"));
-					return true;
-				}
-				
 				if(Utils.isInt(args[1]) == false || Utils.isDouble(args[2]) == false || Utils.isDouble(args[3]) == false){
 					if(args.length != 2){
 						for(String i : format){
@@ -106,17 +104,6 @@ public class pixelmonauctionCommand implements CommandExecutor{
 					return true;
 				}
 				
-//				List<String> moves = Utils.getMoves(player, slot);
-//				String name = Utils.getName(player, slot);
-//				int lvl = Utils.getLevel(player, slot);
-//				List<String> ivs = Utils.getIvs(player, slot);
-//				
-//				String item = Utils.getItem(player, slot);
-//				String nature = Utils.getNature(player, slot);
-//				String ability = Utils.getAbility(player, slot);
-//				String size = Utils.getSize(player, slot);
-//				boolean shiny = Utils.isShiny(player, slot);
-				
 				int amount = 0;
 				
 				if(Utils.hasPokemon(player, 1) == true){
@@ -145,12 +132,24 @@ public class pixelmonauctionCommand implements CommandExecutor{
 				
 				EntityPixelmon pkm = Utils.getPlayersPixelmon(player).get(slot-1);
 				
+				PlayerStorage ps = null;
+				
+				try {
+					ps = PixelmonStorage.PokeballManager.getPlayerStorageFromUUID(player.getUniqueId());
+				} catch (PlayerNotLoadedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				ps.changePokemonAndAssignID(slot-1, null);
+				ps.sendUpdatedList();
+				
 				Auction a = new Auction(player, pkm, price, PixelmonAuctions.time, slot, increment);
 				a.init();
 				if(PixelmonAuctions.avoid.contains(player)){
 					PixelmonAuctions.avoid.remove(player);
 				}
-				Utils.sendMessage(fm.getMessage("AuctionStarted"));
+				Utils.sendMessage(Utils.formatPkmMessage(fm.getMessage("AuctionStarted"), pkm));
 				return true;
 			}
 			

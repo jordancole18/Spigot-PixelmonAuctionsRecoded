@@ -272,7 +272,7 @@ public class Auction {
 			String l = i1.replace("%name%", ep.getLocalizedName())
 					.replace("%level%", ep.getLvl().getLevel() + "")
 					.replace("%shiny%", ep.getIsShiny() + "")
-					.replace("%item%", Utils.getItem(player, ep))
+					.replace("%item%", Utils.getItem(ep))
 					.replace("%nature%", ep.getNature().name())
 					.replace("%ability%", ep.getAbility().getLocalizedName())
 					.replace("%size%", ep.getGrowth().name())

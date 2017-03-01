@@ -50,6 +50,79 @@ public class Utils {
     	return replaced;
     }
     
+    public static String formatPkmMessage(String msg, EntityPixelmon ep){
+    	
+		List<String> moves = Utils.getMoves(ep);
+		List<String> ivs = Utils.getIvs(ep);
+		List<String> evs = Utils.getEvs(ep);
+		
+		String m = "";
+		int h = 0;
+		for(String g : moves){
+			h++;
+			if(h == moves.size()){
+				m = m + "and " + g;
+			}else{
+				m = m + g + ", ";
+			}
+		}
+		String ev = "";
+		int evcount = 0;
+		
+		for(String i : evs){
+			evcount++;
+			if(ev == ""){
+				ev = "HP: " + i;
+			}else{
+				if(evcount == 2){
+					ev = ev + ", Attack: " + i;
+				}else if(evcount == 3){
+					ev = ev + ", Defence: " + i;
+				}else if(evcount == 4){
+					ev = ev + ", Sp.Attack: " + i;
+				}else if(evcount == 5){
+					ev = ev + ", Sp. Defence: " + i;
+				}else if(evcount == 6){
+					ev = ev + ", Speed: " + i;
+				}
+			}
+		}
+		
+		String iv = "";
+		int ivcount = 0;
+		
+		for(String i : ivs){
+			ivcount++;
+			if(iv == ""){
+				iv = "HP: " + i;
+			}else{
+				if(ivcount == 2){
+					iv = iv + ", Attack: " + i;
+				}else if(ivcount == 3){
+					iv = iv + ", Defence: " + i;
+				}else if(ivcount == 4){
+					iv = iv + ", Sp.Attack: " + i;
+				}else if(ivcount == 5){
+					iv = iv + ", Sp. Defence: " + i;
+				}else if(ivcount == 6){
+					iv = iv + ", Speed: " + i;
+				}
+			}
+		}
+    	
+    	String i1 = msg.replace("%name%", ep.getLocalizedName())
+		.replace("%level%", ep.getLvl().getLevel() + "")
+		.replace("%shiny%", ep.getIsShiny() + "")
+		.replace("%item%", Utils.getItem(ep))
+		.replace("%nature%", ep.getNature().name())
+		.replace("%ability%", ep.getAbility().getLocalizedName())
+		.replace("%size%", ep.getGrowth().name())
+		.replace("%moves%", m)
+		.replace("%evs%", ev)
+		.replace("%ivs%", iv);
+    	return i1;
+    }
+    
 	@SuppressWarnings("unchecked")
 	public static WorldServer getWorldServer(Player player){
 		
@@ -173,8 +246,24 @@ public class Utils {
 		return moves;
 	}
 	
+	public static List<String> getMoves(EntityPixelmon pkm){
+		
+		if(pkm == null) return null;
+		
+		List<String> moves = new ArrayList<String>();
+		
+		for(Attack a : pkm.getMoveset().attacks){
+			if(a == null){
+				moves.add("None");
+			}else{
+				moves.add(a.baseAttack.getUnLocalizedName());
+			}
+		}
+		
+		return moves;
+	}
 	
-	public static String getItem(Player player, EntityPixelmon pkm){
+	public static String getItem(EntityPixelmon pkm){
 		if(pkm.getItemHeld() != null){
 			String item = pkm.getItemHeld().getLocalizedName();
 			return item;
@@ -203,7 +292,47 @@ public class Utils {
 		return evs;
 	}
 	
+	public static List<String> getEvs(EntityPixelmon pkm){
+		
+		int hp = pkm.stats.EVs.HP;
+		int attack = pkm.stats.EVs.Attack;
+		int defence = pkm.stats.EVs.Defence;
+		int specialatk = pkm.stats.EVs.SpecialAttack;
+		int specialdefence = pkm.stats.EVs.SpecialDefence;
+		int speed = pkm.stats.EVs.Speed;
+		
+		List<String> evs = new ArrayList<String>();
+		evs.add(hp + "");
+		evs.add(attack + "");
+		evs.add(defence + "");
+		evs.add(specialatk + "");
+		evs.add(specialdefence + "");
+		evs.add(speed + "");
+		
+		return evs;
+	}
+	
+	
 	public static List<String> getIvs(Player player, EntityPixelmon pkm){
+		
+		int hp = pkm.stats.IVs.HP;
+		int attack = pkm.stats.IVs.Attack;
+		int defence = pkm.stats.IVs.Defence;
+		int specialatk = pkm.stats.IVs.SpAtt;
+		int specialdefence = pkm.stats.IVs.SpDef;
+		int speed = pkm.stats.IVs.Speed;
+		
+		List<String> evs = new ArrayList<String>();
+		evs.add(hp + "");
+		evs.add(attack + "");
+		evs.add(defence + "");
+		evs.add(specialatk + "");
+		evs.add(specialdefence + "");
+		evs.add(speed + "");
+		return evs;
+	}
+	
+	public static List<String> getIvs(EntityPixelmon pkm){
 		
 		int hp = pkm.stats.IVs.HP;
 		int attack = pkm.stats.IVs.Attack;
