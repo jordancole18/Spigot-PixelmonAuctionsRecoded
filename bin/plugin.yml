@@ -1,0 +1,9 @@
+name: PixelmonAuctions
+main: me.creeperkila21.pixelmonauctions.PixelmonAuctions
+author: creeperkila21
+version: 1.5
+commands:
+   pixelauction:
+      description: Auction your pixelmon.
+      usage: /<command>
+      aliases: [pixelmonauction, pixelmonauctions, pauc, pauctions]
