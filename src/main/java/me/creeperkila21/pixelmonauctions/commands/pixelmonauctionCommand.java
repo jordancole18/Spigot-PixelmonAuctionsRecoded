@@ -1,7 +1,6 @@
 package me.creeperkila21.pixelmonauctions.commands;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import me.creeperkila21.pixelmonauctions.PixelmonAuctions;
@@ -9,7 +8,6 @@ import me.creeperkila21.pixelmonauctions.Utils.Utils;
 import me.creeperkila21.pixelmonauctions.auction.Auction;
 import me.creeperkila21.pixelmonauctions.config.FileManager;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -41,6 +39,22 @@ public class pixelmonauctionCommand implements CommandExecutor{
 				for(String i : format){
 					player.sendMessage(fm.formatString(i));
 				}
+				return true;
+			}
+			
+			if(args[0].equalsIgnoreCase("mute")){
+				if(PixelmonAuctions.avoid.contains(player) == false){
+					PixelmonAuctions.avoid.add(player);
+				}
+				player.sendMessage(fm.getMessage("AutionsMuted"));
+				return true;
+			}
+			
+			if(args[0].equalsIgnoreCase("unmute")){
+				if(PixelmonAuctions.avoid.contains(player)){
+					PixelmonAuctions.avoid.remove(player);
+				}
+				player.sendMessage(fm.getMessage("AuctionsUnmuted"));
 				return true;
 			}
 			
@@ -220,6 +234,10 @@ public class pixelmonauctionCommand implements CommandExecutor{
 						player.sendMessage(fm.getMessage("LatestBidder"));
 						return true;
 					}
+				}
+				
+				if(PixelmonAuctions.avoid.contains(player)){
+					PixelmonAuctions.avoid.remove(player);
 				}
 				
 				Auction a = Auction.currentAuction;

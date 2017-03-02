@@ -178,11 +178,16 @@ public class Auction {
 		currentAuction = null;
 		
 		if(PixelmonAuctions.allAuctions.isEmpty() == false){
-			if(PixelmonAuctions.allAuctions.containsKey(this)){
-				PixelmonAuctions.allAuctions.remove(this);
+			if(PixelmonAuctions.allAuctions.containsValue(this)){
+				for(Integer in : PixelmonAuctions.allAuctions.keySet()){
+					Auction a = PixelmonAuctions.allAuctions.get(in);
+					if(a == null){
+						PixelmonAuctions.allAuctions.remove(in);
+					}
+				}
 			}
 			if(PixelmonAuctions.allAuctions.isEmpty() == false){
-				Auction a = PixelmonAuctions.allAuctions.get(0);
+				Auction a = PixelmonAuctions.allAuctions.values().iterator().next();
 				currentAuction = a;
 				a.start();
 			}
@@ -192,6 +197,7 @@ public class Auction {
 	
 	public void start(){
 		FileManager fm = FileManager.getInstance();
+		currentAuction = this;
 		Utils.sendMessage(Utils.formatPkmMessage(fm.getMessage("AuctionStarted"), ep).replace("%player%", player).replace("%starting%", getStartingPrice() + "").replace("%increment%", getIncrement() + ""));
 		new BukkitRunnable(){
 			public void run(){

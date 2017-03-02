@@ -50,6 +50,8 @@ public class FileManager {
 			format.add("%prefix% &7/pixelauction auction <Slot> <Price> <Increment>");
 			format.add("%prefix% &7/pixelauction bid [Amount]");
 			format.add("%prefix% &7/pixelauction info");
+			format.add("%prefix% &7/pixelmonauction mute");
+			format.add("%prefix% &7/pixelmonauction unmute");
 			language.set("messages.format", format);
 			language.set("messages.AuctionStarted", "%prefix% &6%player% is auctioning a %shiny%&aLevel: %lvl% %pokemon% &6pokemon with the moves of &a%moves%&6! Bid Starting at &a$%starting% with an increment of &a$%increment%");
 			language.set("messages.LastPokemon", "%prefix% &cYou can not trade your last pokemon!");
@@ -78,6 +80,8 @@ public class FileManager {
 			language.set("messages.HigherBid", "&6You need to raise your bid to atleast &e%bid%!");
 			language.set("messages.AlreadyAuctioning", "&6You already have a pokemon up for auction!");
 			language.set("messages.AuctionPutInQueue", "&6You auction is now in the queue! &e#%num% in queue");
+			language.set("messages.AutionsMuted", "&6All auctions are now muted!");
+			language.set("messages.AuctionsUnmuted", "&6All auctions have been unmuted!");
 			try {
 				language.save(lfile);
 			} catch (IOException e) {
