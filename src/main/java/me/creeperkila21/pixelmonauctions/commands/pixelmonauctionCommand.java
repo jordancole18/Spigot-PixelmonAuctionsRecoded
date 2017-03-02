@@ -1,5 +1,7 @@
 package me.creeperkila21.pixelmonauctions.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import me.creeperkila21.pixelmonauctions.PixelmonAuctions;
@@ -7,6 +9,7 @@ import me.creeperkila21.pixelmonauctions.Utils.Utils;
 import me.creeperkila21.pixelmonauctions.auction.Auction;
 import me.creeperkila21.pixelmonauctions.config.FileManager;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,6 +26,7 @@ public class pixelmonauctionCommand implements CommandExecutor{
 	
 	public List<String> format = fm.getLanguage().getStringList("messages.format");
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		
@@ -132,6 +136,49 @@ public class pixelmonauctionCommand implements CommandExecutor{
 				
 				EntityPixelmon pkm = Utils.getPlayersPixelmon(player).get(slot-1);
 				
+				Auction a = new Auction(player, pkm, price, PixelmonAuctions.time, slot, increment);
+				
+				if(Auction.currentAuction != null){
+					if(Auction.currentAuction.getPlayer() == player.getName()){
+						player.sendMessage(fm.getMessage("AlreadyAuctioning"));
+						return true;
+					}
+					
+					List<Integer> allInts = new ArrayList<Integer>();
+					allInts.addAll(PixelmonAuctions.allAuctions.keySet());
+					
+					if(allInts.isEmpty()){
+						PixelmonAuctions.allAuctions.put(1, a);
+					}else{
+						
+						int highestNum = 0;
+						
+						for(int i : allInts){
+							if(i >= highestNum){
+								highestNum = i;
+							}
+						}
+						
+						PixelmonAuctions.allAuctions.put(highestNum + 1, a);
+						
+					}
+					
+					PlayerStorage ps = null;
+					
+					try {
+						ps = PixelmonStorage.PokeballManager.getPlayerStorageFromUUID(player.getUniqueId());
+					} catch (PlayerNotLoadedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					ps.changePokemonAndAssignID(slot-1, null);
+					ps.sendUpdatedList();
+					
+					player.sendMessage(FileManager.getInstance().getMessage("AuctionPutInQueue").replace("%num%", PixelmonAuctions.allAuctions.size() + 1 + ""));
+					return true;
+				}
+				
 				PlayerStorage ps = null;
 				
 				try {
@@ -144,12 +191,10 @@ public class pixelmonauctionCommand implements CommandExecutor{
 				ps.changePokemonAndAssignID(slot-1, null);
 				ps.sendUpdatedList();
 				
-				Auction a = new Auction(player, pkm, price, PixelmonAuctions.time, slot, increment);
 				a.init();
 				if(PixelmonAuctions.avoid.contains(player)){
 					PixelmonAuctions.avoid.remove(player);
 				}
-				Utils.sendMessage(Utils.formatPkmMessage(fm.getMessage("AuctionStarted"), pkm).replace("%player%", player.getName()).replace("%starting%", a.getStartingPrice() + "").replace("%increment%", a.getIncrement() + ""));
 				return true;
 			}
 			
@@ -170,11 +215,23 @@ public class pixelmonauctionCommand implements CommandExecutor{
 					return true;
 				}
 				
+				if(Auction.currentAuction.getLatestBidder() != null){
+					if(Auction.currentAuction.getLatestBidder() == player){
+						player.sendMessage(fm.getMessage("LatestBidder"));
+						return true;
+					}
+				}
+				
+				Auction a = Auction.currentAuction;
+				
+				if(PixelmonAuctions.econ.getBalance(player.getName()) < a.getCurrentPrice() + a.getIncrement()){
+					player.sendMessage(fm.getMessage("HigherBid").replace("%bid%", a.getCurrentPrice() + a.getIncrement() + ""));
+					return true;
+				}
+				
 				if(args.length == 1){
-					Auction a = Auction.currentAuction;
 					a.addBid(player, a.getCurrentPrice() + a.getIncrement());
 				}else if(args.length >= 2){
-					Auction a = Auction.currentAuction;
 					
 					if(Utils.isDouble(args[1]) == false){
 						for(String i : format){
@@ -184,6 +241,11 @@ public class pixelmonauctionCommand implements CommandExecutor{
 					}
 					
 					double d = Double.parseDouble(args[1]);
+					
+					if(a.getCurrentPrice() + a.getIncrement() > d){
+						player.sendMessage(fm.getMessage(""));
+						return true;
+					}
 					
 					a.addBid(player, d);
 				}

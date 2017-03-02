@@ -38,6 +38,7 @@ public class Auction {
 		this.player = player.getName();
 		this.ep = ep;
 		this.startingPrice = price;
+		this.currentPrice = price;
 		this.timeLeft = timeLeft;
 		this.slot = slot;
 		this.increment = increment;
@@ -52,6 +53,7 @@ public class Auction {
 			
 			lowerNum = Collections.min(allInts) + 1;
 			PixelmonAuctions.allAuctions.put(lowerNum, this);
+			Bukkit.getPlayer(player).sendMessage(FileManager.getInstance().getMessage("AuctionPutInQueue").replace("%num%", PixelmonAuctions.allAuctions.size() + 1 + ""));
 		}else{
 			start();
 			currentAuction = this;
@@ -61,11 +63,14 @@ public class Auction {
 	public void addBid(Player player, double newPrice){
 		setLatestBidder(player);
 		setCurrentPrice(newPrice);
+		
+		FileManager fm = FileManager.getInstance();
+		
 		if(PixelmonAuctions.antiSnipeEnabled && timeLeft <= PixelmonAuctions.antiSnipeTime){
 			timeLeft+= PixelmonAuctions.antiSnipeTimeAdded;
-			FileManager fm = FileManager.getInstance();
-			Utils.sendMessage(fm.getMessage("TimeAdded").replace("%timeadded%", PixelmonAuctions.antiSnipeTimeAdded + "").replace("%currenttime%", timeLeft + ""));
+			Utils.sendMessage(fm.getMessage("TimeAdded").replace("%timeadded%", PixelmonAuctions.antiSnipeTimeAdded + " seconds").replace("%currenttime%", timeLeft + " seconds"));
 		}
+		Utils.sendMessage(Utils.formatPkmMessage(fm.getMessage("PlayerBids"), ep).replace("%currentbid%", newPrice + "").replace("%player%", player.getName()));
 	}
 	
 	public int getSlot(){
@@ -152,11 +157,13 @@ public class Auction {
 					PlayerStorage bidderStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUID(latestBidder.getUniqueId());
 					bidderStorage.addToParty(ep);
 					FileManager fm = FileManager.getInstance();
-					latestBidder.sendMessage(Utils.replacePokemon(fm.getMessage("ReceivedPokemon").replace("%player%", player), ep));
+					latestBidder.sendMessage(Utils.formatPkmMessage(fm.getMessage("ReceivedPokemon").replace("%player%", player), ep));
 					if(Bukkit.getPlayer(player) != null){
-						Bukkit.getPlayer(player).sendMessage(Utils.replacePokemon(fm.getMessage("SentPokemon").replace("%player%", latestBidder.getName()), ep));
+						Bukkit.getPlayer(player).sendMessage(Utils.formatPkmMessage(fm.getMessage("SentPokemon").replace("%player%", latestBidder.getName()), ep));
 					}
 				}
+				FileManager fm = FileManager.getInstance();
+				Utils.sendMessage(Utils.formatPkmMessage(fm.getMessage("AuctionEnded"), ep).replace("%price%", getCurrentPrice() + "").replace("%player%", latestBidder.getName()));
 			}else{
 				FileManager fm = FileManager.getInstance();
 				Utils.sendMessage(fm.getMessage("AuctionEnded"));
@@ -184,6 +191,8 @@ public class Auction {
 	}
 	
 	public void start(){
+		FileManager fm = FileManager.getInstance();
+		Utils.sendMessage(Utils.formatPkmMessage(fm.getMessage("AuctionStarted"), ep).replace("%player%", player).replace("%starting%", getStartingPrice() + "").replace("%increment%", getIncrement() + ""));
 		new BukkitRunnable(){
 			public void run(){
 				if(hasEnded == true){
