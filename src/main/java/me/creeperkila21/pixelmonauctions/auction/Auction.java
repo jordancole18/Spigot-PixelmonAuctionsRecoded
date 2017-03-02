@@ -1,5 +1,6 @@
 package me.creeperkila21.pixelmonauctions.auction;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -129,13 +130,18 @@ public class Auction {
 		if(latestBidder == null){
 			Utils.sendMessage(FileManager.getInstance().getMessage("AuctionEndedNoBidder"));
 			Player p = Bukkit.getPlayer(player);
-			if(p == null){
-				@SuppressWarnings("null")
+			if(p != null){
 				PlayerStorage bidderStorage = PixelmonStorage.PokeballManager.getPlayerStorageFromUUID(p.getUniqueId());
 				bidderStorage.addToParty(ep);
 			}else{
 				FileManager fm = FileManager.getInstance();
-				fm.getConfig().set("toGive." + player + "." + ep.getUniqueID().toString(), ep);
+				fm.getConfig().set("toGive." + player + "." + ep.getUniqueID().toString(), new Pokemon(ep).toString());
+				try {
+					fm.saveConfig();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}else{
 			EconomyResponse er = PixelmonAuctions.econ.withdrawPlayer(latestBidder.getName(), getCurrentPrice());
@@ -185,6 +191,11 @@ public class Auction {
 				}
 				
 				timeLeft--;
+				
+				if(PixelmonAuctions.broadcastOn.contains(timeLeft)){
+					FileManager fm = FileManager.getInstance();
+					Utils.sendMessage(Utils.formatPkmMessage(fm.getMessage("AuctionEnding"), ep).replace("%time%", timeLeft + " seconds"));
+				}
 				
 				if(timeLeft == 0){
 					try {

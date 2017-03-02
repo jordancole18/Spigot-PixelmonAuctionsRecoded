@@ -35,7 +35,7 @@ public class FileManager {
 		language = YamlConfiguration.loadConfiguration(lfile);
 		
 		if(!(lfile.exists())){
-			language.set("messages.prefix", "&6[&cPixelmon&ffAuctions&6]");
+			language.set("messages.prefix", "&6[&cPixelmon&fAuctions&6]");
 			language.set("messages.ReceivedPokemon", "%prefix% &6You have received a &e%pokemon% &6from &e%player%");
 			language.set("messages.SentPokemon", "%prefix% &6You have sent your &e%pkm% &6to &e%player%");
 			language.set("messages.TimeAdded", "%prefix% &e%timeadded% &6has been added to the auction! There is now &e%currenttime% &6left!");
@@ -49,12 +49,13 @@ public class FileManager {
 			format.add("%prefix% &7/pixelauction auction <Slot> <Price> <Increment>");
 			format.add("%prefix% &7/pixelauction bid [Amount]");
 			format.add("%prefix% &7/pixelauction info");
-			language.set("messages.AuctionCommand.format", format);
-			language.set("messages.AuctionStarted", "%prefix% &6%player% is auctioning a%shiny%&aLevel: %lvl% %pokemon% &6pokemon with the moves of &a%moves%&6! Bid Starting at &a$%starting% with an increment of &a$%increment%");
+			language.set("messages.format", format);
+			language.set("messages.AuctionStarted", "%prefix% &6%player% is auctioning a %shiny%&aLevel: %lvl% %pokemon% &6pokemon with the moves of &a%moves%&6! Bid Starting at &a$%starting% with an increment of &a$%increment%");
 			language.set("messages.LastPokemon", "%prefix &cYou can not trade your last pokemon!");
 			language.set("messages.NoAuction", "%prefix% &6There is currently no auction going on!");
 			language.set("messages.OwnBid", "%prefix% &cYou can not bid on your own auction!");
 			language.set("messages.InvalidSlot", "%prefix% &cThat is an invalid slot! (1-6)");
+			language.set("messages.AuctionEnding", "%prefix% &6The auction for a level %lvl% %pokemon% is ending in %time%");
 			try {
 				language.save(lfile);
 			} catch (IOException e) {
@@ -89,9 +90,8 @@ public class FileManager {
 	}
 	
 	public String formatString(String i){
-		String prefix = ChatColor.translateAlternateColorCodes('&', language.getString("messages.prefix"));
 		String m = ChatColor.translateAlternateColorCodes('&', i);
-		return m.replace("%prefix%", prefix);
+		return m.replace("%prefix%", getPrefix());
 	}
 	
 	public String getPrefix(){
@@ -102,7 +102,7 @@ public class FileManager {
 	}
 	
 	public String getMessage(String msg){
-		return ChatColor.translateAlternateColorCodes('&', msg.replace("%prefix%", getPrefix()));
+		return ChatColor.translateAlternateColorCodes('&', language.getString("messages." + msg).replace("%prefix%", getPrefix()));
 	}
 	
         //Use this to do like fm.getData().getStringList();

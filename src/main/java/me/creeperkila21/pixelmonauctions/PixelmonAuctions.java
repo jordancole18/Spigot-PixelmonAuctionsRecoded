@@ -7,7 +7,9 @@ import java.util.logging.Logger;
 
 import me.creeperkila21.pixelmonauctions.Utils.Utils;
 import me.creeperkila21.pixelmonauctions.auction.Auction;
+import me.creeperkila21.pixelmonauctions.commands.pixelmonauctionCommand;
 import me.creeperkila21.pixelmonauctions.config.FileManager;
+import me.creeperkila21.pixelmonauctions.listeners.PlayerEvents;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -63,6 +65,8 @@ public class PixelmonAuctions extends JavaPlugin{
 		antiSnipeTimeAdded = fm.getConfig().getInt("antiSnipeAddedTimeInSeconds");
 		instance = this;
 		time = Utils.getTimeInSeconds(fm.getConfig().getString("time"));
+		getCommand("pixelauction").setExecutor(new pixelmonauctionCommand());
+		Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
 	}
 	
     private boolean setupEconomy() {

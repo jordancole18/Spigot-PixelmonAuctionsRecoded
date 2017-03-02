@@ -21,7 +21,7 @@ public class pixelmonauctionCommand implements CommandExecutor{
 
 	FileManager fm = FileManager.getInstance();
 	
-	public List<String> format = fm.getConfig().getStringList("format");
+	public List<String> format = fm.getLanguage().getStringList("messages.format");
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -149,7 +149,7 @@ public class pixelmonauctionCommand implements CommandExecutor{
 				if(PixelmonAuctions.avoid.contains(player)){
 					PixelmonAuctions.avoid.remove(player);
 				}
-				Utils.sendMessage(Utils.formatPkmMessage(fm.getMessage("AuctionStarted"), pkm));
+				Utils.sendMessage(Utils.formatPkmMessage(fm.getMessage("AuctionStarted"), pkm).replace("%player%", player.getName()).replace("%starting%", a.getStartingPrice() + "").replace("%increment%", a.getIncrement() + ""));
 				return true;
 			}
 			

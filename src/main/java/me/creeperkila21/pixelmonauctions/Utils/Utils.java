@@ -11,6 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.pixelmonmod.pixelmon.battles.attacks.Attack;
@@ -30,6 +31,7 @@ public class Utils {
 			time = Integer.parseInt(msg.replace("s", ""));
 		}else if(msg.contains("m")){
 			time = Integer.parseInt(msg.replace("m", ""));
+			time = time * 60;
 		}
 		return time;
 	}
@@ -49,6 +51,19 @@ public class Utils {
     	
     	return replaced;
     }
+    
+	public static WorldServer getWorldServer() {
+		
+		WorldServer ws = null;
+		
+		for(WorldServer worldserver : MinecraftServer.getServer().worldServers){
+			if(worldserver != null){
+				ws = worldserver;
+			}
+		}
+		
+		return ws;
+	}
     
     public static String formatPkmMessage(String msg, EntityPixelmon ep){
     	
@@ -111,15 +126,16 @@ public class Utils {
 		}
     	
     	String i1 = msg.replace("%name%", ep.getLocalizedName())
-		.replace("%level%", ep.getLvl().getLevel() + "")
-		.replace("%shiny%", ep.getIsShiny() + "")
+		.replace("%lvl%", ep.getLvl().getLevel() + "")
+		.replace("%shiny%", ep.getIsShiny() ? ChatColor.YELLOW.toString(): "")
 		.replace("%item%", Utils.getItem(ep))
 		.replace("%nature%", ep.getNature().name())
 		.replace("%ability%", ep.getAbility().getLocalizedName())
 		.replace("%size%", ep.getGrowth().name())
 		.replace("%moves%", m)
 		.replace("%evs%", ev)
-		.replace("%ivs%", iv);
+		.replace("%ivs%", iv)
+		.replace("%pokemon%", ep.getLocalizedName());
     	return i1;
     }
     
